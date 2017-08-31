@@ -5,6 +5,7 @@ from typing import (Union,
                     TypeVar,
                     Type,
                     List)
+import inspect
 
 
 def check_type(obj, candidate_type, reltype='invariant') -> bool:
@@ -55,3 +56,14 @@ def check_type(obj, candidate_type, reltype='invariant') -> bool:
         return check_type(obj, candidate_type.__args__[0], reltype='covariant')
 
     raise ValueError(f'Cannot check against {reltype} type {candidate_type}')
+
+
+def check_args(func):
+    def check(*args):
+        sig = inspect.signature(func)
+        params = zip(sig.parameters, args)
+        for name, value in params:
+            if not check_type(value, sig.parameters[name].annotation):
+                raise TypeError(f'Expected {sig.parameters[name]}, got {type(value)}.')
+        return func(*args)
+    return check

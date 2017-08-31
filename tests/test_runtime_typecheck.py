@@ -1,6 +1,8 @@
-from typing import Union, Tuple, Any, TypeVar, Type, List
+from typing import Union, Tuple, Any, List
 
-from runtime_typecheck.runtime_typecheck import check_type
+import pytest
+
+from runtime_typecheck.runtime_typecheck import check_type, check_args
 
 
 def test_any():
@@ -40,3 +42,22 @@ def test_nested_types():
     assert not check_type([(1.9, "Texas"), (-5, "Particle")],
                           List[Tuple[int, str]])
     assert not check_type([1.11, 27, 33, 1956], List[Tuple[int, str]])
+
+
+@check_args
+def dummy_fun(a: int = 0, b: str = '', c: Tuple[int, str] = (0, '')) -> int:
+    return 1
+
+
+def test_args():
+    assert dummy_fun() == 1
+    assert dummy_fun(10, 'antani', (1, '0')) == 1
+
+
+def test_raises():
+    with pytest.raises(TypeError):
+        dummy_fun('1')
+    with pytest.raises(TypeError):
+        dummy_fun(1, 1)
+    with pytest.raises(TypeError):
+        dummy_fun(1, '1', ('1', '0'))
