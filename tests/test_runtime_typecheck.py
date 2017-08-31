@@ -1,6 +1,6 @@
 from typing import Union, Tuple, Any, TypeVar, Type, List
 
-from typecheck.typecheck import check_type
+from runtime_typecheck.runtime_typecheck import check_type
 
 
 def test_any():
