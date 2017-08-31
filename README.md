@@ -1,5 +1,5 @@
 
-[![Build Status](https://travis-ci.org/jacopofar/runtime_typechecker.svg?branch=master)](https://travis-ci.org/jacopofar/runtime_typechecker)
+[![Build Status](https://travis-ci.org/jacopofar/runtime_typecheck.svg?branch=master)](https://travis-ci.org/jacopofar/runtime_typecheck)
 
 # runtime typecheck
 Checks that a value satisfies a Python 3.6 type at runtime
