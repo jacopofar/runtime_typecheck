@@ -22,8 +22,7 @@ def test_unions():
 def test_tuples():
     assert check_type((1, 67), Tuple[int, int])
     assert not check_type((1, "new york"), Tuple[int, int])
-    # NOTE not a tuple, but the whole object is immutable
-    # being a JSON received from HTTP
+    # NOTE not a tuple, currently a list is accepted instead of a tuple and vice-versa
     assert check_type([1, "new york"], Tuple[int, str])
     assert check_type((1, 67, "Amsterdam"), Tuple[int, int, str])
     assert not check_type(("Amsterdam", 1, 67), Tuple[int, int, str])
