@@ -11,5 +11,5 @@ setup(
     author='Jacopo Farina',
     license='MIT',
     packages=['runtime_typecheck'],
-    url='https://github.com/jacopofar/type-check'
+    url='https://github.com/jacopofar/runtime_typecheck'
 )
