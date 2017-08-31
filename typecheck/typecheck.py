@@ -55,35 +55,3 @@ def check_type(obj, candidate_type, reltype='invariant') -> bool:
         return check_type(obj, candidate_type.__args__[0], reltype='covariant')
 
     raise ValueError(f'Cannot check against {reltype} type {candidate_type}')
-
-
-assert check_type(3, Any)
-assert check_type([5, "hi"], Any)
-
-
-assert check_type(3, int)
-assert not check_type(3, float)
-
-assert check_type(3, Union[int, str])
-assert check_type("hello", Union[int, str])
-assert not check_type(4.78, Union[int, str])
-
-assert check_type((1, 67), Tuple[int, int])
-assert not check_type((1, "new york"), Tuple[int, int])
-# NOTE not a tuple, but the whole object is immutable being a JSON received from HTTP
-assert check_type([1, "new york"], Tuple[int, str])
-
-assert check_type((1, 67, "Amsterdam"), Tuple[int, int, str])
-assert not check_type(("Amsterdam", 1, 67), Tuple[int, int, str])
-
-
-assert check_type([1, 27, 33, 1956], List[int])
-assert not check_type([1.11, 27, 33, 1956], List[int])
-assert not check_type([1, 27, 33, 1956, "h", 42], List[int])
-
-
-assert check_type([1, 27, 33, 1956], List[Union[str, int]])
-assert check_type([(12, "Texas"), (-5, "Particle")], List[Tuple[int, str]])
-assert not check_type([(1.9, "Texas"), (-5, "Particle")], List[Tuple[int, str]])
-
-assert not check_type([1.11, 27, 33, 1956], List[Tuple[int, str]])
