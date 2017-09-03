@@ -20,6 +20,19 @@ class DetailedTypeError(TypeError):
 def check_type(obj: Any,
                candidate_type: Any,
                reltype: str='invariant') -> bool:
+    """Tell wether a value correspond to a type, optionally specifying the type as contravariant or covariant.
+
+    Args:
+        obj (Any): The value to check.
+        candidate_type (Any): The type to check the object against.
+        reltype (:obj:`str`, optional): Variance of the type, can be contravariant, covariant or invariant.
+            By default is invariant.
+    Returns:
+        bool: True if the type is fine, False otherwise
+
+    Raises:
+        ValueError: When the variance or the type are not among the ones the function can manage.
+    """
     if reltype not in ['invariant', 'covariant', 'contravariant']:
         raise ValueError(f' Variadic type {reltype} is unknown')
 
@@ -70,6 +83,13 @@ def check_type(obj: Any,
 
 
 def check_args(func):
+    """A decorator that performs type checking using type hints at runtime::
+            @check_args
+            def fun(a: int):
+                print(f'fun is being called with parameter {a}')
+            # this will raise a TypeError describing the issue without the function being called
+            fun('not an int')
+    """
     @wraps(func)
     def check(*args):
         sig = inspect.signature(func)
