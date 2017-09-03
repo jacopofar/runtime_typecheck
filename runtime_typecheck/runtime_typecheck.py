@@ -60,6 +60,7 @@ def check_type(obj, candidate_type, reltype='invariant') -> bool:
 
 
 def check_args(func):
+    @wraps(func)
     def check(*args):
         sig = inspect.signature(func)
         params = zip(sig.parameters, args)
