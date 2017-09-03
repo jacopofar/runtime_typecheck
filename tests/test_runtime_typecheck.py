@@ -2,7 +2,7 @@ from typing import Union, Tuple, Any, List
 
 import pytest
 
-from runtime_typecheck.runtime_typecheck import check_type, check_args
+from runtime_typecheck.runtime_typecheck import check_type, check_args, DetailedTypeError
 
 
 def test_any():
@@ -53,11 +53,13 @@ def test_args():
     assert dummy_fun() == 7
     assert dummy_fun(10, 'antani', (1, '0')) == 25
 
-
 def test_raises():
-    with pytest.raises(TypeError):
+    with pytest.raises(DetailedTypeError):
         dummy_fun('1')
-    with pytest.raises(TypeError):
+    with pytest.raises(DetailedTypeError):
         dummy_fun(1, 1)
-    with pytest.raises(TypeError):
+    with pytest.raises(DetailedTypeError):
         dummy_fun(1, '1', ('1', '0'))
+    with pytest.raises(DetailedTypeError):
+        dummy_fun(1, '1', (1, '0'), extra=42)
+
