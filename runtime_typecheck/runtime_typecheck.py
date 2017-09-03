@@ -1,25 +1,32 @@
 #!/usr/bin/env python3
 from functools import wraps
 import inspect
-from typing import (Union,
-                    Tuple,
-                    Any,
-                    TypeVar,
-                    Type,
-                    List)
+from typing import (
+    Any,
+    List,
+    NamedTuple,
+    Tuple,
+    TypeVar,
+    Type,
+    Union)
+
+IssueDescription = NamedTuple('IssueDescription', [('name', str), ('expected_type', Any), ('value', Any)])
 
 
 class DetailedTypeError(TypeError):
     issues = []
 
-    def __init__(self, issues: List[Tuple[str, str, str]]):
+    def __init__(self, issues: List[IssueDescription]):
         self.issues = issues
         super().__init__(f'typing issues found:{issues}')
+
+    def __str__(self):
+        return ' '.join([f'{i.name} had to be of type {i.expected_type} but was {i.value}, which has type {type(i.value)}' for i in self.issues])
 
 
 def check_type(obj: Any,
                candidate_type: Any,
-               reltype: str='invariant') -> bool:
+               reltype: str = 'invariant') -> bool:
     """Tell wether a value correspond to a type, optionally specifying the type as contravariant or covariant.
 
     Args:
@@ -90,6 +97,7 @@ def check_args(func):
             # this will raise a TypeError describing the issue without the function being called
             fun('not an int')
     """
+
     @wraps(func)
     def check(*args):
         sig = inspect.signature(func)
@@ -97,7 +105,7 @@ def check_args(func):
         found_errors = []
         for name, value in params:
             if not check_type(value, sig.parameters[name].annotation):
-                found_errors.append((name, sig.parameters[name].annotation, value))
+                found_errors.append(IssueDescription(name, sig.parameters[name].annotation, value))
         if len(found_errors) > 0:
             raise DetailedTypeError(found_errors)
         return func(*args)

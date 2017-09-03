@@ -53,7 +53,6 @@ def test_args():
     assert dummy_fun() == 7
     assert dummy_fun(10, 'antani', (1, '0')) == 25
 
-
 def test_raises():
     with pytest.raises(DetailedTypeError):
         dummy_fun('1')
