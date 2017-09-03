@@ -9,7 +9,17 @@ from typing import (Union,
                     List)
 
 
-def check_type(obj, candidate_type, reltype='invariant') -> bool:
+class DetailedTypeError(TypeError):
+    issues = []
+
+    def __init__(self, issues: List[Tuple[str, str, str]]):
+        self.issues = issues
+        super().__init__(f'typing issues found:{issues}')
+
+
+def check_type(obj: Any,
+               candidate_type: Any,
+               reltype: str='invariant') -> bool:
     if reltype not in ['invariant', 'covariant', 'contravariant']:
         raise ValueError(f' Variadic type {reltype} is unknown')
 
@@ -64,9 +74,12 @@ def check_args(func):
     def check(*args):
         sig = inspect.signature(func)
         params = zip(sig.parameters, args)
+        found_errors = []
         for name, value in params:
             if not check_type(value, sig.parameters[name].annotation):
-                raise TypeError(f'Expected {sig.parameters[name]}, got {type(value)}.')
+                found_errors.append((name, sig.parameters[name].annotation, value))
+        if len(found_errors) > 0:
+            raise DetailedTypeError(found_errors)
         return func(*args)
 
     return check
