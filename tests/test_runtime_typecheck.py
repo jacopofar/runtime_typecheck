@@ -46,12 +46,12 @@ def test_nested_types():
 
 @check_args
 def dummy_fun(a: int = 0, b: str = '', c: Tuple[int, str] = (0, '')) -> int:
-    return a + len(b) - c(0) + len(c(1))
+    return a + len(b) + c[0] + len(c[1]) + 7
 
 
 def test_args():
-    assert dummy_fun() == 1
-    assert dummy_fun(10, 'antani', (1, '0')) == 1
+    assert dummy_fun() == 7
+    assert dummy_fun(10, 'antani', (1, '0')) == 25
 
 
 def test_raises():

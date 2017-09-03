@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
+from functools import wraps
+import inspect
 from typing import (Union,
                     Tuple,
                     Any,
                     TypeVar,
                     Type,
                     List)
-import inspect
 
 
 def check_type(obj, candidate_type, reltype='invariant') -> bool:
-
     if reltype not in ['invariant', 'covariant', 'contravariant']:
         raise ValueError(f' Variadic type {reltype} is unknown')
 
@@ -49,7 +49,8 @@ def check_type(obj, candidate_type, reltype='invariant') -> bool:
     if type(candidate_type) == type(TypeVar):
         # TODO consider contravariant, variant and bound
         # invariant with a list of constraints, acts like a Tuple
-        if not (candidate_type.__covariant__ or candidate_type.__contracovariant__) and len(candidate_type.__constraints__) > 0:
+        if not (candidate_type.__covariant__ or candidate_type.__contracovariant__) and len(
+                candidate_type.__constraints__) > 0:
             return any(check_type(obj, t) for t in candidate_type.__constraints__)
 
     if type(candidate_type) == type(Type):
@@ -66,4 +67,5 @@ def check_args(func):
             if not check_type(value, sig.parameters[name].annotation):
                 raise TypeError(f'Expected {sig.parameters[name]}, got {type(value)}.')
         return func(*args)
+
     return check
