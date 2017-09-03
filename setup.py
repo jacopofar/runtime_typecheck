@@ -5,9 +5,9 @@ except ImportError:
 
 setup(
     name='runtime_typecheck',
-    long_description='Check the correspondence between a value and a Python 3.6 type at runtime',
+    long_description='Runtime type checking with Python 3.6 typing functions',
     version='0.1',
-    description='Check that a value satisfies a Python 3.6 type',
+    description='Runtime type checking with Python 3.6 typing',
     author='Jacopo Farina',
     author_email='jacopo1.farina@gmail.com',
     license='MIT',

@@ -46,7 +46,7 @@ def test_nested_types():
 
 @check_args
 def dummy_fun(a: int = 0, b: str = '', c: Tuple[int, str] = (0, '')) -> int:
-    return 1
+    return a + len(b) - c(0) + len(c(1))
 
 
 def test_args():
