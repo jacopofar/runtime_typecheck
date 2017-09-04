@@ -106,10 +106,6 @@ def check_args(func):
         for name, value in binding.arguments.items():
             if not check_type(value, sig.parameters[name].annotation):
                 found_errors.append(IssueDescription(name, sig.parameters[name].annotation, value))
-        # TODO here we have to iterate on kwargs items
-        for name, value in kwargs.items():
-            if not check_type(value, sig.parameters[name].annotation):
-                found_errors.append(IssueDescription(name, sig.parameters[name].annotation, value))
         if len(found_errors) > 0:
             raise DetailedTypeError(found_errors)
         return func(*args, **kwargs)
