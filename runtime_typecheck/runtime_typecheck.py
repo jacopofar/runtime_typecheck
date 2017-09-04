@@ -99,11 +99,15 @@ def check_args(func):
     """
 
     @wraps(func)
-    def check(*args):
+    def check(*args, **kwargs):
         sig = inspect.signature(func)
         params = zip(sig.parameters, args)
         found_errors = []
         for name, value in params:
+            if not check_type(value, sig.parameters[name].annotation):
+                found_errors.append(IssueDescription(name, sig.parameters[name].annotation, value))
+        # TODO here we have to iterate on kwargs items
+        for name, value in kwargs.items():
             if not check_type(value, sig.parameters[name].annotation):
                 found_errors.append(IssueDescription(name, sig.parameters[name].annotation, value))
         if len(found_errors) > 0:

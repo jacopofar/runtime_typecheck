@@ -48,10 +48,17 @@ def test_nested_types():
 def dummy_fun(a: int = 0, b: str = '', c: Tuple[int, str] = (0, '')) -> int:
     return a + len(b) + c[0] + len(c[1]) + 7
 
+@check_args
+def dummy_fun_with_nonoptional(x: int, y: str = '', z: Tuple[int, str] = (0, '')) -> int:
+    return x + len(y) + z[0] + len(z[1]) + 7
 
 def test_args():
     assert dummy_fun() == 7
     assert dummy_fun(10, 'antani', (1, '0')) == 25
+
+def test_dict():
+    param_dic = {'y': 'antani', 'z': (1, '0')}
+    assert dummy_fun_with_nonoptional(10, **param_dic) == 25
 
 def test_raises():
     with pytest.raises(DetailedTypeError):
