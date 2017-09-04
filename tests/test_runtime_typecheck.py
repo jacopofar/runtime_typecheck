@@ -65,7 +65,7 @@ def test_dict():
     assert dummy_fun_with_nonoptional(10, **param_dic) == 25
 
 
-def test_raises():
+def test_raises_simple():
     with pytest.raises(DetailedTypeError):
         dummy_fun('1')
     with pytest.raises(DetailedTypeError):
@@ -76,3 +76,12 @@ def test_raises():
         dummy_fun(1, '1', (1, '0'), extra=42)
     with pytest.raises(DetailedTypeError):
         dummy_fun(a=1, b='1', c=('1', '0'))
+
+
+def test_raises_with_dictionary():
+    with pytest.raises(DetailedTypeError):
+        param_dic = {'y': 'antani', 'z': (1, '0')}
+        assert dummy_fun_with_nonoptional('a string', **param_dic) == 25
+    with pytest.raises(DetailedTypeError):
+        param_dic = {'y': 11, 'z': (1, '0')}
+        dummy_fun_with_nonoptional(49, **param_dic)
