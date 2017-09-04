@@ -52,6 +52,8 @@ def dummy_fun(a: int = 0, b: str = '', c: Tuple[int, str] = (0, '')) -> int:
 def test_args():
     assert dummy_fun() == 7
     assert dummy_fun(10, 'antani', (1, '0')) == 25
+    assert dummy_fun(a=10, b='antani', c=(1, '0')) == 25
+
 
 def test_raises():
     with pytest.raises(DetailedTypeError):
@@ -62,3 +64,5 @@ def test_raises():
         dummy_fun(1, '1', ('1', '0'))
     with pytest.raises(TypeError):
         dummy_fun(1, '1', (1, '0'), extra=42)
+    with pytest.raises(DetailedTypeError):
+        dummy_fun(a=1, b='1', c=('1', '0'))
