@@ -1,4 +1,4 @@
-from typing import Union, Tuple, Any, List
+from typing import Any, Dict, List, Set, Sized, Tuple, Union
 
 import pytest
 
@@ -32,8 +32,23 @@ def test_tuples():
 
 def test_lists():
     assert check_type([1, 27, 33, 1956], List[int])
+    assert not check_type(41, List[int])
     assert not check_type([1.11, 27, 33, 1956], List[int])
     assert not check_type([1, 27, 33, 1956, "h", 42], List[int])
+
+
+def test_sets():
+    assert check_type({1, 27, 33, 1956}, Set[int])
+    assert check_type(set(), Set[int])
+    assert not check_type(41, Set[int])
+    assert not check_type({1.11, 27, 33, 1956}, Set[int])
+    assert not check_type({1, 27, 33, 1956, "h", 42}, Set[int])
+
+
+def test_dicts():
+    assert check_type({"pi": 3.1415}, Dict[str, float])
+    assert check_type({}, Dict[str, float])
+    assert not check_type({"something": "wrong"}, Dict[str, float])
 
 
 def test_nested_types():
@@ -42,6 +57,12 @@ def test_nested_types():
     assert not check_type([(1.9, "Texas"), (-5, "Particle")],
                           List[Tuple[int, str]])
     assert not check_type([1.11, 27, 33, 1956], List[Tuple[int, str]])
+
+
+# Some important ABCs
+def test_sized():
+    assert check_type([1, 27, 33, 1956], Sized)
+    assert not check_type(5, Sized)
 
 
 @check_args

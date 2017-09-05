@@ -3,6 +3,7 @@ from functools import wraps
 import inspect
 from typing import (
     Any,
+    Dict,
     List,
     NamedTuple,
     Tuple,
@@ -31,6 +32,7 @@ class DetailedTypeError(TypeError):
 
     def __len__(self):
         return len(self.issues)
+
 
 # pylint: disable=C0123
 def check_type(obj: Any,
@@ -79,6 +81,16 @@ def check_type(obj: Any,
             return False
         return all(check_type(o, t, reltype) for (o, t) in zip(obj, candidate_type.__args__))
 
+    # Dict, each (key, value) matches the type in __args__
+    # the __args__ length check is necessary because type(List) == type(Dict)
+    # ugly :(
+    if type(candidate_type) == type(Dict) and len(candidate_type.__args__) == 2:
+        if type(obj) != dict:
+            return False
+        return all(check_type(k, candidate_type.__args__[0], reltype)
+                   and check_type(v, candidate_type.__args__[1], reltype)
+                   for (k, v) in obj.items())
+
     # List, each element matches the type in __args__
     if type(candidate_type) == type(List):
         if not hasattr(obj, '__len__'):
@@ -95,6 +107,9 @@ def check_type(obj: Any,
 
     if type(candidate_type) == type(Type):
         return check_type(obj, candidate_type.__args__[0], reltype='covariant')
+
+    if inspect.isclass(candidate_type) and reltype in ['invariant']:
+        return isinstance(obj, candidate_type)
 
     raise ValueError(f'Cannot check against {reltype} type {candidate_type}')
 
@@ -122,3 +137,6 @@ def check_args(func):
         return func(*args, **kwargs)
 
     return check
+
+
+print(check_type([1, 27, 33, 1956], List[int]))
