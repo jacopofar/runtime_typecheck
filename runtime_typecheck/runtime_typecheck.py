@@ -74,7 +74,7 @@ def check_type(obj: Any,
         return any(check_type(obj, t, reltype) for t in candidate_type.__args__)
 
     # Tuple, each element matches the corresponding type in __args__
-    if type(candidate_type) == type(Tuple):
+    if type(candidate_type) == type(Tuple) and tuple in candidate_type.__bases__:
         if not hasattr(obj, '__len__'):
             return False
         if len(candidate_type.__args__) != len(obj):
@@ -82,20 +82,19 @@ def check_type(obj: Any,
         return all(check_type(o, t, reltype) for (o, t) in zip(obj, candidate_type.__args__))
 
     # Dict, each (key, value) matches the type in __args__
-    # the __args__ length check is necessary because type(List) == type(Dict)
-    # ugly :(
-    if type(candidate_type) == type(Dict) and len(candidate_type.__args__) == 2:
+    if type(candidate_type) == type(Dict) and dict in candidate_type.__bases__:
         if type(obj) != dict:
             return False
         return all(check_type(k, candidate_type.__args__[0], reltype)
                    and check_type(v, candidate_type.__args__[1], reltype)
                    for (k, v) in obj.items())
 
-    # List, each element matches the type in __args__
-    if type(candidate_type) == type(List):
+    # List or Set, each element matches the type in __args__
+    if type(candidate_type) == type(List) and (list in candidate_type.__bases__ or set in candidate_type.__bases__):
         if not hasattr(obj, '__len__'):
             return False
         return all(check_type(o, candidate_type.__args__[0], reltype) for o in obj)
+
 
     # TypeVar, this is tricky
     if type(candidate_type) == type(TypeVar):
