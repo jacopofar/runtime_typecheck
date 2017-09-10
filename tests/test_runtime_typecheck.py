@@ -75,6 +75,11 @@ def dummy_fun_with_nonoptional(x: int, y: str = '', z: Tuple[int, str] = (0, '')
     return x + len(y) + z[0] + len(z[1]) + 7
 
 
+@check_args
+def dummy_fun_with_base_collections(x: dict = {"0": 1}, y: tuple = (0, 1)) -> int:
+    return 1
+
+
 def test_args():
     assert dummy_fun() == 7
     assert dummy_fun(10, 'antani', (1, '0')) == 25
@@ -86,6 +91,11 @@ def test_dict():
     assert dummy_fun_with_nonoptional(10, **param_dic) == 25
 
 
+def test_collections():
+    assert dummy_fun_with_base_collections() == 1
+    assert dummy_fun_with_base_collections({}, (0, 0)) == 1
+
+
 def test_raises_simple():
     with pytest.raises(DetailedTypeError):
         dummy_fun('1')
@@ -94,9 +104,11 @@ def test_raises_simple():
     with pytest.raises(DetailedTypeError):
         dummy_fun(1, '1', ('1', '0'))
     with pytest.raises(TypeError):
-        dummy_fun(1, '1', (1, '0'), extra=42)
+        dummy_fun(1, '1', (1, '0'), extra=42) # pylint: disable=E1123
     with pytest.raises(DetailedTypeError):
         dummy_fun(a=1, b='1', c=('1', '0'))
+    with pytest.raises(TypeError):
+        dummy_fun_with_nonoptional() # pylint: disable=E1120
 
 
 def test_raises_with_dictionary():
@@ -106,6 +118,15 @@ def test_raises_with_dictionary():
     with pytest.raises(DetailedTypeError):
         param_dic = {'y': 11, 'z': (1, '0')}
         dummy_fun_with_nonoptional(49, **param_dic)
+
+
+def test_raises_with_base_collections():
+    with pytest.raises(DetailedTypeError):
+        dummy_fun_with_base_collections(0, (0, 1))
+    with pytest.raises(DetailedTypeError):
+        dummy_fun_with_base_collections({}, 'a_string')
+    with pytest.raises(DetailedTypeError):
+        dummy_fun_with_base_collections(0, 'a_string')
 
 
 def test_exception_content():
