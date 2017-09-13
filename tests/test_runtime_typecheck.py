@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Set, Sized, Tuple, Union
+from typing import Any, AnyStr, Dict, List, Optional, Set, Sized, TypeVar, Tuple, Union
 
 import pytest
 
@@ -13,6 +13,13 @@ def test_any():
 def test_numbers():
     assert check_type(3, int)
     assert not check_type(3, float)
+
+
+def test_strings():
+    assert check_type('stringy mcstringface', str)
+    assert check_type(u'a string', AnyStr)
+    assert check_type(b'another string', AnyStr)
+    assert check_type(f'a third string', AnyStr)
 
 
 def test_unions():
@@ -57,6 +64,26 @@ def test_nested_types():
     assert not check_type([(1.9, "Texas"), (-5, "Particle")],
                           List[Tuple[int, str]])
     assert not check_type([1.11, 27, 33, 1956], List[Tuple[int, str]])
+
+
+def test_aliases():
+    Vector = List[float]
+    assert check_type([1.0, 2.0], Vector)
+    assert not check_type(1, Vector)
+
+
+def test_typevar():
+    T = TypeVar('T') # Any type
+    Num = TypeVar('IT', int, float) # Either int or float
+    assert check_type(1, T)
+    assert check_type(1, Num)
+    assert check_type(1.0, Num)
+    assert not check_type('str', Num)
+
+
+def test_optional():
+    assert check_type([1], Optional[List[int]])
+    assert check_type(None, Optional[List[int]])
 
 
 # Some important ABCs
