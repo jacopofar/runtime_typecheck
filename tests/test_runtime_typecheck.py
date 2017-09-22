@@ -164,8 +164,8 @@ def test_exception_content():
         param_dic = {'y': 11, 'z': (1, '0')}
         dummy_fun_with_nonoptional('I am a string!', **param_dic)
     # The two issues were identified
-    assert ('x', int, 'I am a string!', False) in excinfo.value
-    assert ('y', str, 11, False) in excinfo.value
+    assert ('x', int, 'I am a string!', False, None) in excinfo.value
+    assert ('y', str, 11, False, None) in excinfo.value
     # and nothing else was
     assert len(excinfo.value) == 2
 
@@ -175,6 +175,16 @@ def test_no_value_no_default():
         param_dic = {'y': 11, 'z': (1, '0')}
         dummy_fun_with_nonoptional(**param_dic)
     # The missing x parameter was spotted
-    assert ('x', int, None, True) in excinfo.value
+    assert ('x', int, None, True, None) in excinfo.value
+    # and nothing else was
+    assert len(excinfo.value) == 1
+
+
+def test_unknown_parameters():
+    with pytest.raises(DetailedTypeError) as excinfo:
+        param_dic = {'x': 67, 'y': 11, 'z': (1, '0'), 'w': 999}
+        dummy_fun_with_nonoptional(**param_dic)
+    # The unknown w parameter was spotted
+    assert (None, None, None, None, "got an unexpected keyword argument 'w'") in excinfo.value
     # and nothing else was
     assert len(excinfo.value) == 1

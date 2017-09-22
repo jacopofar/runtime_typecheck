@@ -118,14 +118,15 @@ def check_args(func):
                         found_errors.append(IssueDescription(
                             name, sig.parameters[name].annotation, None, True))
             # NOTE currently only find one, at most, detecting what else is missing is tricky if not impossible
+            if len(found_errors) == 0:
+                raise DetailedTypeError([IssueDescription(
+                    None, None, None, None, str(te))])
             raise DetailedTypeError(found_errors)
 
         for name, value in binding.arguments.items():
             if not check_type(value, sig.parameters[name].annotation):
                 found_errors.append(IssueDescription(
                     name, sig.parameters[name].annotation, value, False))
-
-
 
         if found_errors:
             raise DetailedTypeError(found_errors)
@@ -140,8 +141,11 @@ class IssueDescription(NamedTuple):
     expected_type: Any
     value: Any
     missing_parameter: bool
+    generic_message: str = None
 
     def __repr__(self) -> str:
+        if self.name is None:
+            return f'Generic type error: {self.generic_message}'
         if self.missing_parameter:
             return f'{self.name} has no default value and was not given,expected a value of type {self.expected_type}'
         else:
