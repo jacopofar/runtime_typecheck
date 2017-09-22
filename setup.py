@@ -6,7 +6,7 @@ except ImportError:
 setup(
     name='runtime_typecheck',
     long_description='Runtime type checking with Python 3.6 typing functions',
-    version='0.5',
+    version='0.6',
     description='Runtime type checking with Python 3.6 typing',
     author='Jacopo Farina',
     author_email='jacopo1.farina@gmail.com',

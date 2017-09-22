@@ -103,12 +103,30 @@ def check_args(func):
     @wraps(func)
     def check(*args, **kwargs):  # pylint: disable=C0111
         sig = inspect.signature(func)
-        binding = sig.bind(*args, **kwargs)
         found_errors = []
+        binding = None
+        try:
+            binding = sig.bind(*args, **kwargs)
+        except TypeError as te:
+            for name, metadata in sig.parameters.items():
+                # protected member and then comparison with the message error as a string :(
+                # Know a nicer way? Please drop me a message
+                if metadata.default == inspect._empty:
+                    # copy from inspect module, it is the very same error message
+                    error_in_case = 'missing a required argument: {arg!r}'.format(arg=name)
+                    if str(te) == error_in_case:
+                        found_errors.append(IssueDescription(
+                            name, sig.parameters[name].annotation, None, True))
+            # NOTE currently only find one, at most, detecting what else is missing is tricky if not impossible
+            raise DetailedTypeError(found_errors)
+
         for name, value in binding.arguments.items():
             if not check_type(value, sig.parameters[name].annotation):
                 found_errors.append(IssueDescription(
-                    name, sig.parameters[name].annotation, value))
+                    name, sig.parameters[name].annotation, value, False))
+
+
+
         if found_errors:
             raise DetailedTypeError(found_errors)
         return func(*args, **kwargs)
@@ -121,9 +139,13 @@ class IssueDescription(NamedTuple):
     name: str
     expected_type: Any
     value: Any
+    missing_parameter: bool
 
     def __repr__(self) -> str:
-        return f'{self.name} had to be of type {self.expected_type} but was {self.value}, ' \
+        if self.missing_parameter:
+            return f'{self.name} has no default value and was not given,expected a value of type {self.expected_type}'
+        else:
+            return f'{self.name} had to be of type {self.expected_type} but was {self.value}, ' \
                f'which has type {type(self.value)}'
 
 

@@ -36,7 +36,6 @@ def test_tuples():
     assert check_type((1, 67, "Amsterdam"), Tuple[int, int, str])
     assert not check_type(("Amsterdam", 1, 67), Tuple[int, int, str])
 
-# do not use the test function when running Mara stand-alone
 
 def test_lists():
     """
@@ -165,7 +164,17 @@ def test_exception_content():
         param_dic = {'y': 11, 'z': (1, '0')}
         dummy_fun_with_nonoptional('I am a string!', **param_dic)
     # The two issues were identified
-    assert ('x', int, 'I am a string!') in excinfo.value
-    assert ('y', str, 11) in excinfo.value
+    assert ('x', int, 'I am a string!', False) in excinfo.value
+    assert ('y', str, 11, False) in excinfo.value
     # and nothing else was
     assert len(excinfo.value) == 2
+
+
+def test_no_value_no_default():
+    with pytest.raises(DetailedTypeError) as excinfo:
+        param_dic = {'y': 11, 'z': (1, '0')}
+        dummy_fun_with_nonoptional(**param_dic)
+    # The missing x parameter was spotted
+    assert ('x', int, None, True) in excinfo.value
+    # and nothing else was
+    assert len(excinfo.value) == 1
