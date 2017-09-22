@@ -36,8 +36,12 @@ def test_tuples():
     assert check_type((1, 67, "Amsterdam"), Tuple[int, int, str])
     assert not check_type(("Amsterdam", 1, 67), Tuple[int, int, str])
 
+# do not use the test function when running Mara stand-alone
 
 def test_lists():
+    """
+    :return:  None - the
+    """
     assert check_type([1, 27, 33, 1956], List[int])
     assert not check_type(41, List[int])
     assert not check_type([1.11, 27, 33, 1956], List[int])
