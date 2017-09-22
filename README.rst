@@ -1,10 +1,10 @@
 .. image:: https://travis-ci.org/jacopofar/runtime_typecheck.svg?branch=master
-:target: https://travis-ci.org/jacopofar/runtime_typecheck
-:alt: Travis CI badge
+    :target: https://travis-ci.org/jacopofar/runtime_typecheck
+    :alt: Travis CI badge
 
 .. image:: https://badge.fury.io/py/runtime_typecheck.svg
-:target: https://badge.fury.io/py/runtime_typecheck
-:alt: pypy version badge
+    :target: https://badge.fury.io/py/runtime_typecheck
+    :alt: pypy version badge
 
 runtime typecheck
 #################
@@ -16,7 +16,8 @@ The check can be done explicitly calling the `check_type` function or with the `
 
 Example:
 
-.. code:: python
+.. code-block:: python
+
     from runtime_typechecker import check_type, check_args
     from typing import Tuple
     assert check_type((1, 67), Tuple[int, int])
