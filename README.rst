@@ -8,9 +8,13 @@
 
 runtime typecheck
 #################
+
+## __NOTE:__ this was fun to implement and I learned a lot about Python type metadata, but if you are looking for a runtime type checker look at `Pydantic<https://pydantic-docs.helpmanual.io/>`_
+
 Checks that a value satisfies a Python 3.6 type at runtime
 
 This code uses Python 3.6 type hints and the `typing` package to provide a simple runtime type check.
+
 
 The check can be done explicitly calling the `check_type` function or with the `@check_args` function decorator which raises an exception when the argument passed to the function do not match the type hints
 
