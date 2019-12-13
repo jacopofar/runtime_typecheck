@@ -9,7 +9,8 @@
 runtime typecheck
 #################
 
-## __NOTE:__ this was fun to implement and I learned a lot about Python type metadata, but if you are looking for a runtime type checker look at `Pydantic<https://pydantic-docs.helpmanual.io/>`_
+NOTE: this was fun to implement and I learned a lot about Python type metadata, but if you are looking for a runtime type checker look at `Pydantic<https://pydantic-docs.helpmanual.io/>`_
+-----------------
 
 Checks that a value satisfies a Python 3.6 type at runtime
 
